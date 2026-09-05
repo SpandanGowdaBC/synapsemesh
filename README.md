@@ -1,4 +1,4 @@
-# SynapseMesh 🧠🕸️
+﻿# SynapseMesh 🧠🕸️
 > **Autonomous Multi-Agent Task Orchestrator & Knowledge Graph Memory Engine**
 
 [![Python 3.11](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
@@ -23,5 +23,10 @@ Nodes and Edges created dynamically in Neo4j via Cypher queries:
 
 ---
 
-## 🎯 Resume & Interview Summary
-> *"Built SynapseMesh, an autonomous multi-agent task orchestrator leveraging Python (FastAPI), Neo4j Graph Database, and Redis. Implemented Cypher graph queries to index agent reasoning paths, memory nodes, and task execution relationships."*
+---
+
+## Author
+
+**Spandan Gowda B C**
+* **GitHub**: [@SpandanGowdaBC](https://github.com/SpandanGowdaBC)
+* **Repository**: [SynapseMesh](https://github.com/SpandanGowdaBC/synapsemesh)
