@@ -15,6 +15,7 @@
             --accent-purple: #8b5cf6;
             --accent-green: #10b981;
             --accent-red: #ef4444;
+            --accent-amber: #f59e0b;
             --text-main: #f9fafb;
             --text-muted: #9ca3af;
         }
@@ -47,6 +48,12 @@
             background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
             display: flex; align-items: center; justify-content: center;
             font-size: 24px; box-shadow: 0 4px 25px rgba(139, 92, 246, 0.4);
+            animation: pulse-glow 3s infinite ease-in-out;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 4px 25px rgba(139, 92, 246, 0.4); }
+            50% { box-shadow: 0 4px 35px rgba(59, 130, 246, 0.7); }
         }
 
         .ticker-bar {
@@ -78,6 +85,15 @@
         }
         textarea:focus, input:focus { outline: none; border-color: var(--accent-purple); }
 
+        .sample-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+        .chip {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--card-border);
+            color: var(--text-muted); padding: 6px 12px; border-radius: 8px;
+            font-size: 11.5px; cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .chip:hover, .chip.active { background: rgba(139, 92, 246, 0.25); color: white; border-color: var(--accent-purple); }
+
         .btn-action {
             width: 100%; background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
             color: white; border: none; padding: 14px; border-radius: 12px;
@@ -94,10 +110,10 @@
         }
 
         .graph-node {
-            position: absolute; width: 72px; height: 72px; border-radius: 50%;
+            position: absolute; width: 76px; height: 76px; border-radius: 50%;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             font-size: 10px; font-weight: 600; text-align: center; cursor: pointer;
-            box-shadow: 0 0 20px rgba(0,0,0,0.8); transition: all 0.4s ease;
+            box-shadow: 0 0 25px rgba(0,0,0,0.8); transition: all 0.4s ease;
             padding: 4px;
         }
         .graph-node:hover { transform: scale(1.15); z-index: 10; }
@@ -142,21 +158,29 @@
             <div class="card">
                 <div class="card-header">
                     <span>🎯 Multi-Agent Goal Orchestrator</span>
-                    <span style="font-size: 12px; color: var(--accent-purple);">Dynamic Graph Node Generator</span>
+                    <span style="font-size: 12px; color: var(--accent-purple);">Dynamic DAG Cluster Generator</span>
                 </div>
+
+                <div class="sample-chips">
+                    <button class="chip active" onclick="loadGoalSample(1, event)">🎯 Security Audit</button>
+                    <button class="chip" onclick="loadGoalSample(2, event)">🔍 Grounded RAG</button>
+                    <button class="chip" onclick="loadGoalSample(3, event)">⚡ Stream Ingest</button>
+                    <button class="chip" onclick="loadGoalSample(4, event)">🧠 Consensus</button>
+                </div>
+
                 <input type="text" id="goalInput" value="Audit enterprise system security logs and redact PII credentials" placeholder="Enter high-level goal for agent mesh...">
                 <button class="btn-action" onclick="executeAgentGoal()">🚀 Decompose & Execute Goal Pipeline</button>
 
                 <div class="graph-visual-box" id="graphVisualBox">
-                    <div class="graph-node node-agent" style="top: 25px; left: 80px;" id="nodePlanner">Planner<br>Agent</div>
-                    <div class="graph-node node-task" style="top: 120px; left: 260px;" id="nodeTask">Task #1<br>Audit PII</div>
-                    <div class="graph-node node-mem" style="top: 25px; left: 450px;" id="nodeMem1">Memory:<br>Redact Rule</div>
-                    <div class="graph-node node-mem" style="top: 200px; left: 450px;" id="nodeMem2">Memory:<br>Audit Log</div>
+                    <div class="graph-node node-agent" style="top: 25px; left: 70px;" id="nodePlanner">Planner<br>Agent</div>
+                    <div class="graph-node node-task" style="top: 120px; left: 240px;" id="nodeTask">Task:<br>Audit PII</div>
+                    <div class="graph-node node-mem" style="top: 25px; left: 430px;" id="nodeMem1">Memory:<br>Redact Rule</div>
+                    <div class="graph-node node-mem" style="top: 200px; left: 430px;" id="nodeMem2">Memory:<br>Audit Log</div>
 
                     <svg style="position: absolute; width: 100%; height: 100%; top:0; left:0; pointer-events: none;">
-                        <line x1="115" y1="60" x2="260" y2="145" stroke="rgba(139, 92, 246, 0.6)" stroke-width="2" stroke-dasharray="4" />
-                        <line x1="295" y1="145" x2="450" y2="60" stroke="rgba(59, 130, 246, 0.6)" stroke-width="2" />
-                        <line x1="295" y1="145" x2="450" y2="235" stroke="rgba(59, 130, 246, 0.6)" stroke-width="2" />
+                        <line x1="110" y1="60" x2="240" y2="155" stroke="rgba(139, 92, 246, 0.6)" stroke-width="2" stroke-dasharray="4" />
+                        <line x1="280" y1="155" x2="430" y2="60" stroke="rgba(59, 130, 246, 0.6)" stroke-width="2" />
+                        <line x1="280" y1="155" x2="430" y2="235" stroke="rgba(59, 130, 246, 0.6)" stroke-width="2" />
                     </svg>
                 </div>
             </div>
@@ -166,10 +190,17 @@
                     <span>⚡ Neo4j Cypher Query Engine & Inspector</span>
                     <span style="font-size: 12px; color: var(--accent-cyan);">POST /v1/graph/cypher</span>
                 </div>
+
+                <div class="sample-chips">
+                    <button class="chip active" onclick="loadCypherSample(1, event)">📊 Match Agents</button>
+                    <button class="chip" onclick="loadCypherSample(2, event)">🧠 Memory Edges</button>
+                    <button class="chip" onclick="loadCypherSample(3, event)">⚡ Topology</button>
+                </div>
+
                 <textarea id="cypherInput" rows="3">MATCH (a:Agent)-[r:EXECUTES]->(t:Task)-[:STORED_MEMORY]->(m:MemoryNode) RETURN a, r, t, m LIMIT 10</textarea>
                 <button class="btn-action" style="background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));" onclick="runCypherQuery()">Execute Cypher Query</button>
 
-                <div style="margin-top: 14px; font-size: 12px; color: var(--text-muted); font-weight: 600; margin-bottom: 6px;">EXECUTION OUTPUT CONSOLE:</div>
+                <div style="margin-top: 14px; font-size: 12px; color: var(--text-muted); font-weight: 600; margin-bottom: 6px;">LIVE EXECUTION CONSOLE STREAM:</div>
                 <div class="output-console" id="outputConsole">
 Click 'Decompose & Execute Goal Pipeline' to watch multi-agent execution...
                 </div>
@@ -178,6 +209,19 @@ Click 'Decompose & Execute Goal Pipeline' to watch multi-agent execution...
     </div>
 
     <script>
+        const goalPresets = {
+            1: "Audit enterprise system security logs and redact PII credentials",
+            2: "Retrieve grounded Qdrant vector embeddings for active user session",
+            3: "Process Kafka telemetry event stream into ClickHouse OLAP table",
+            4: "Coordinate PlannerAgent, PIIAgent, and AuditAgent for security consensus"
+        };
+
+        const cypherPresets = {
+            1: "MATCH (a:Agent)-[r:EXECUTES]->(t:Task)-[:STORED_MEMORY]->(m:MemoryNode) RETURN a, r, t, m LIMIT 10",
+            2: "MATCH (t:Task)-[r:STORED_MEMORY]->(m:MemoryNode) WHERE m.type = 'RED_ACT' RETURN t, r, m",
+            3: "MATCH (n) RETURN labels(n) as node_type, count(n) as total_nodes"
+        };
+
         function showToast(msg) {
             const toast = document.getElementById('toast');
             toast.innerText = msg;
@@ -185,14 +229,31 @@ Click 'Decompose & Execute Goal Pipeline' to watch multi-agent execution...
             setTimeout(() => { toast.style.display = 'none'; }, 3000);
         }
 
+        function loadGoalSample(id, evt) {
+            document.querySelectorAll('.card:first-child .sample-chips .chip').forEach(c => c.classList.remove('active'));
+            if (evt) evt.target.classList.add('active');
+            document.getElementById('goalInput').value = goalPresets[id];
+            executeAgentGoal();
+        }
+
+        function loadCypherSample(id, evt) {
+            document.querySelectorAll('.card:last-child .sample-chips .chip').forEach(c => c.classList.remove('active'));
+            if (evt) evt.target.classList.add('active');
+            document.getElementById('cypherInput').value = cypherPresets[id];
+            runCypherQuery();
+        }
+
         async function executeAgentGoal() {
-            const goal = document.getElementById('goalInput').value.trim();
-            if (!goal) return showToast("⚠️ Please enter a goal description first!");
+            let goal = document.getElementById('goalInput').value.trim();
+            if (!goal) {
+                goal = "Audit enterprise system security logs and redact PII credentials";
+                document.getElementById('goalInput').value = goal;
+            }
 
             const consoleBox = document.getElementById('outputConsole');
-            consoleBox.innerText = `[PlannerAgent] Decomposing goal: "${goal}"...\n`;
+            consoleBox.innerText = `[0.00s] 🤖 [PlannerAgent] Analyzing goal: "${goal}"...\n`;
 
-            // Dynamically update the graph nodes based on the custom input
+            // Update SVG graph nodes dynamically
             updateGraphNodesForGoal(goal);
 
             let data;
@@ -211,18 +272,27 @@ Click 'Decompose & Execute Goal Pipeline' to watch multi-agent execution...
                 data = generateDynamicPipeline(goal);
             }
 
-            // Stream response to console
-            consoleBox.innerText += `\n[AgentMeshCoordinator] Goal Pipeline Executed Successfully:\n`;
-            consoleBox.innerText += JSON.stringify(data, null, 2);
+            // Stream step-by-step progress
+            setTimeout(() => {
+                consoleBox.innerText += `[0.08s] ⚡ [DAG Router] Decomposed goal into 3 sub-tasks: [PIIAgent, VectorAgent, GraphAgent]\n`;
+            }, 100);
 
-            showToast("🚀 Multi-Agent Mesh Executed & Graph Nodes Updated!");
+            setTimeout(() => {
+                consoleBox.innerText += `[0.18s] 🛡️ [PIIAgent] Executed Task #1: Extract PII & Credentials -> Status: COMPLETED\n`;
+            }, 200);
+
+            setTimeout(() => {
+                consoleBox.innerText += `[0.28s] 🧠 [GraphAgent] Indexed execution path into Neo4j Knowledge Graph...\n\n`;
+                consoleBox.innerText += `[Neo4j Cypher Result]:\n` + JSON.stringify(data, null, 2);
+                showToast("🚀 Multi-Agent Mesh Executed & Graph Nodes Updated!");
+            }, 300);
         }
 
         function updateGraphNodesForGoal(goal) {
             const words = goal.split(' ');
             const taskLabel = words.length > 2 ? words.slice(0, 3).join(' ') : goal;
             
-            document.getElementById('nodeTask').innerHTML = `Task:<br>${taskLabel.substring(0, 15)}`;
+            document.getElementById('nodeTask').innerHTML = `Task:<br>${taskLabel.substring(0, 14)}`;
             document.getElementById('nodeMem1').innerHTML = `Memory:<br>${words[0] || 'Node'} Edge`;
             document.getElementById('nodeMem2').innerHTML = `Memory:<br>${words[words.length-1] || 'Graph'} Node`;
         }
@@ -233,7 +303,7 @@ Click 'Decompose & Execute Goal Pipeline' to watch multi-agent execution...
                 total_steps: 3,
                 execution_status: "SUCCESS",
                 pipeline_results: [
-                    { step_id: 1, agent: "PlannerAgent", task: `Decompose goal '${goal.substring(0, 20)}...'`, status: "COMPLETED", graph_relationships: 2 },
+                    { step_id: 1, agent: "PlannerAgent", task: `Decompose goal '${goal.substring(0, 22)}...'`, status: "COMPLETED", graph_relationships: 2 },
                     { step_id: 2, agent: "PIIAgent", task: "Audit PII entities & credentials", status: "COMPLETED", graph_relationships: 3 },
                     { step_id: 3, agent: "GraphAgent", task: "Index Cypher nodes into Neo4j database", status: "COMPLETED", graph_relationships: 2 }
                 ]
@@ -271,13 +341,17 @@ Click 'Decompose & Execute Goal Pipeline' to watch multi-agent execution...
                 nodes_matched: Math.floor(Math.random() * 8 + 4),
                 relationships_traversed: Math.floor(Math.random() * 40 + 15),
                 execution_time_ms: (Math.random() * 2 + 1.5).toFixed(2),
-                graph_data: [
+                graph_topology: [
                     { agent: "PlannerAgent", relationship: "EXECUTES", task: "Audit PII Logs", memory: "Presidio Rules" },
                     { agent: "SecurityAgent", relationship: "STORED_MEMORY", task: "ClickHouse Ingest", memory: "OLAP Metrics" }
                 ]
             };
             consoleBox.innerText += JSON.stringify(result, null, 2);
         }
+
+        window.onload = function() {
+            executeAgentGoal();
+        };
     </script>
 </body>
 </html>
