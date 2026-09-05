@@ -14,9 +14,7 @@
 
 **SynapseMesh** is an autonomous AI agent orchestration platform that organizes multi-agent execution workflows (Planner, Executor, Evaluator) and maintains long-term contextual memory using a **Neo4j Graph Database**.
 
----
 
-![SynapseMesh Dashboard](docs/dashboard.png)
 
 
 ## 🏗️ Graph Memory Architecture
@@ -27,14 +25,9 @@ Nodes and Edges created dynamically in Neo4j via Cypher queries:
 (:Task) -[:STORED_MEMORY]-> (:MemoryNode {content: 'PII Redacted & Verification Complete'})
 ```
 
----
-
-![SynapseMesh Dashboard](docs/dashboard.png)
 
 
----
 
-![SynapseMesh Dashboard](docs/dashboard.png)
 
 
 ## Author
