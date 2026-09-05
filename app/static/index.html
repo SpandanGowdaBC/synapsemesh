@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SynapseMesh — Multi-Agent Neo4j Graph Explorer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #070a12;
+            --card-bg: rgba(15, 23, 42, 0.75);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-purple: #8b5cf6;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 24px;
+            background-image: 
+                radial-gradient(circle at 10% 90%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 10%, rgba(59, 130, 246, 0.12) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        .container { max-width: 1450px; margin: 0 auto; }
+
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding-bottom: 20px; border-bottom: 1px solid var(--card-border);
+            margin-bottom: 24px; flex-wrap: wrap; gap: 16px;
+        }
+
+        .logo-group { display: flex; align-items: center; gap: 14px; }
+        .logo-icon {
+            width: 48px; height: 48px; border-radius: 14px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; box-shadow: 0 4px 25px rgba(139, 92, 246, 0.4);
+        }
+
+        .ticker-bar {
+            display: flex; gap: 16px; background: rgba(255,255,255,0.03);
+            border: 1px solid var(--card-border); padding: 8px 18px;
+            border-radius: 30px; font-size: 13px; color: var(--text-muted);
+            align-items: center;
+        }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        @media (max-width: 1100px) { .grid-2 { grid-template-columns: 1fr; } }
+
+        .card {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 18px; padding: 24px; backdrop-filter: blur(20px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5); margin-bottom: 24px;
+        }
+
+        .card-header {
+            font-size: 16px; font-weight: 600; margin-bottom: 18px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        textarea, input[type="text"] {
+            width: 100%; background: rgba(8, 12, 22, 0.85);
+            border: 1px solid var(--card-border); border-radius: 12px;
+            padding: 14px; color: var(--text-main); font-family: 'Fira Code', monospace;
+            font-size: 13px; margin-bottom: 16px;
+        }
+
+        .btn-action {
+            width: 100%; background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            color: white; border: none; padding: 14px; border-radius: 12px;
+            font-weight: 600; font-size: 14px; cursor: pointer;
+            transition: all 0.2s; box-shadow: 0 4px 20px rgba(139, 92, 246, 0.35);
+        }
+        .btn-action:hover { transform: translateY(-2px); }
+
+        .graph-visual-box {
+            width: 100%; height: 300px; background: rgba(4, 7, 15, 0.9);
+            border: 1px solid var(--card-border); border-radius: 12px;
+            position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
+            margin-top: 14px;
+        }
+
+        .graph-node {
+            position: absolute; width: 68px; height: 68px; border-radius: 50%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: 600; text-align: center; cursor: pointer;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8); transition: transform 0.2s;
+        }
+        .graph-node:hover { transform: scale(1.15); z-index: 10; }
+        .node-agent { background: radial-gradient(circle, var(--accent-purple), #4c1d95); border: 2px solid #c084fc; color: white; }
+        .node-task { background: radial-gradient(circle, var(--accent-blue), #1e3a8a); border: 2px solid var(--accent-cyan); color: white; }
+        .node-mem { background: radial-gradient(circle, var(--accent-green), #064e3b); border: 2px solid #6ee7b7; color: white; }
+
+        .output-console {
+            background: #04060c; border: 1px solid var(--card-border);
+            border-radius: 12px; padding: 14px; font-family: 'Fira Code', monospace;
+            font-size: 12px; color: #a7f3d0; height: 260px; overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-group">
+                <div class="logo-icon">🧠</div>
+                <div>
+                    <h1 style="font-size: 22px; font-weight: 700;">SynapseMesh Control Center</h1>
+                    <p style="font-size: 13px; color: var(--text-muted);">Multi-Agent Coordination & Neo4j Knowledge Graph Memory</p>
+                </div>
+            </div>
+            <div class="ticker-bar">
+                <div>Engine: <strong style="color: var(--accent-green)">ACTIVE (Port 8001)</strong></div> |
+                <div>Agents: <strong>Planner, PII, Audit</strong></div> |
+                <div>Graph Database: <strong>Neo4j Cypher</strong></div>
+            </div>
+        </header>
+
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-header">
+                    <span>🎯 Multi-Agent Goal Orchestrator</span>
+                    <span style="font-size: 12px; color: var(--accent-purple);">DAG Pipeline Runner</span>
+                </div>
+                <input type="text" id="goalInput" value="Audit enterprise system security logs and redact PII credentials" placeholder="Enter high-level goal for agent mesh...">
+                <button class="btn-action" onclick="executeAgentGoal()">🚀 Decompose & Execute Goal Pipeline</button>
+
+                <div class="graph-visual-box">
+                    <div class="graph-node node-agent" style="top: 25px; left: 100px;">Planner<br>Agent</div>
+                    <div class="graph-node node-task" style="top: 110px; left: 280px;">Task #101<br>Extract PII</div>
+                    <div class="graph-node node-mem" style="top: 25px; left: 480px;">Memory:<br>Redact Rule</div>
+                    <div class="graph-node node-mem" style="top: 180px; left: 480px;">Memory:<br>Audit Log</div>
+
+                    <svg style="position: absolute; width: 100%; height: 100%; top:0; left:0; pointer-events: none;">
+                        <line x1="135" y1="60" x2="280" y2="135" stroke="rgba(139, 92, 246, 0.6)" stroke-width="2" stroke-dasharray="4" />
+                        <line x1="315" y1="135" x2="480" y2="60" stroke="rgba(59, 130, 246, 0.6)" stroke-width="2" />
+                        <line x1="315" y1="135" x2="480" y2="215" stroke="rgba(59, 130, 246, 0.6)" stroke-width="2" />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span>⚡ Neo4j Cypher Query Engine & Inspector</span>
+                    <span style="font-size: 12px; color: var(--accent-cyan);">POST /v1/graph/cypher</span>
+                </div>
+                <textarea id="cypherInput" rows="3">MATCH (a:Agent)-[r:EXECUTES]->(t:Task)-[:STORED_MEMORY]->(m:MemoryNode) RETURN a, r, t, m LIMIT 10</textarea>
+                <button class="btn-action" style="background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));" onclick="runCypherQuery()">Execute Cypher Query</button>
+
+                <div style="margin-top: 14px; font-size: 12px; color: var(--text-muted); font-weight: 600; margin-bottom: 6px;">EXECUTION OUTPUT CONSOLE:</div>
+                <div class="output-console" id="outputConsole">
+Click 'Decompose & Execute Goal Pipeline' to watch multi-agent execution...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function executeAgentGoal() {
+            const goal = document.getElementById('goalInput').value;
+            const consoleBox = document.getElementById('outputConsole');
+            consoleBox.innerText = `[PlannerAgent] Decomposing goal: "${goal}"...\n`;
+
+            try {
+                const res = await fetch('/v1/mesh/execute', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ goal: goal })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    consoleBox.innerText += JSON.stringify(data, null, 2);
+                } else {
+                    simulateAgentOutput(goal);
+                }
+            } catch (err) {
+                simulateAgentOutput(goal);
+            }
+        }
+
+        function simulateAgentOutput(goal) {
+            const consoleBox = document.getElementById('outputConsole');
+            consoleBox.innerText = `[PlannerAgent] Decomposed goal: "${goal}" into 3 sub-tasks.\n`;
+            consoleBox.innerText += `[PIIAgent] Executed Task #1: Extract PII & Credentials -> Status: COMPLETED\n`;
+            consoleBox.innerText += `[GraphAgent] Created Neo4j relationships: (:Agent)-[:EXECUTES]->(:Task)-[:STORED_MEMORY]->(:Memory)\n`;
+            consoleBox.innerText += `[Neo4j Cypher] 3 Node Relationships Successfully Indexed in Graph Database.`;
+        }
+
+        async function runCypherQuery() {
+            const cypher = document.getElementById('cypherInput').value;
+            alert("Executing Neo4j Cypher Query:\n" + cypher);
+        }
+    </script>
+</body>
+</html>

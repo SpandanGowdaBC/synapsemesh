@@ -1,4 +1,7 @@
+import os
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List, Optional
 from app.agents.mesh_coordinator import AgentMeshCoordinator
@@ -40,3 +43,15 @@ def run_cypher(req: CypherQueryRequest):
         "execution_time_ms": 2.15,
         "status": "EXECUTED"
     }
+
+# Static Dashboard UI Mount
+static_dir = os.path.join(os.path.dirname(__file__), "..", "static")
+if os.path.exists(static_dir):
+    app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+@app.get("/")
+def read_root():
+    index_path = os.path.join(static_dir, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    return {"message": "SynapseMesh API is running"}
